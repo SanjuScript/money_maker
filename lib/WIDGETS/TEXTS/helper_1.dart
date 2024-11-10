@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:money_maker/CUSTOM/custom_font.dart';
 
 class HelperText1 extends StatelessWidget {
   final String text;
@@ -17,12 +18,12 @@ class HelperText1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      // style: PerfectTypogaphy.bold.copyWith(
-      //   fontSize: fontSize,
-      //   // fontWeight: FontWeight.normal,
-      //   color: color,
-      //   decoration: decoration,
-      // ),
+      style: PerfectTypogaphy.bold.copyWith(
+        fontSize: fontSize,
+        // fontWeight: FontWeight.normal,
+        color: color,
+        decoration: decoration,
+      ),
       textAlign: TextAlign.center,
     );
   }

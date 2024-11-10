@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_maker/ANIMATION/page_transition.dart';
 import 'package:money_maker/CUSTOM/custom_font.dart';
 import 'package:money_maker/EXTENSION/color_extension.dart';
 
@@ -7,12 +8,9 @@ class PerfectTeme {
     useMaterial3: true,
     scaffoldBackgroundColor: "#F0F8FF".toColor(),
     appBarTheme: const AppBarTheme(
-      
       surfaceTintColor: Colors.transparent,
-      
       elevation: 5,
       shadowColor: Colors.black12,
-    
       backgroundColor: Colors.white,
       iconTheme: IconThemeData(color: Colors.black87),
     ),
@@ -40,5 +38,11 @@ class PerfectTeme {
           letterSpacing: 0.5,
           color: Colors.black87,
         )),
+         pageTransitionsTheme: PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android:CustomPageTransition(),
+                TargetPlatform.iOS: CustomPageTransition(),
+          }
+        )
   );
 }

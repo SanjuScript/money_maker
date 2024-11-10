@@ -1,1 +1,41 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"money-maker-2a99a","appId":"1:529853329719:android:0737273a66cb99516f6ab2","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"money-maker-2a99a","configurations":{"android":"1:529853329719:android:0737273a66cb99516f6ab2","ios":"1:529853329719:ios:26b5f65d297b6e346f6ab2","macos":"1:529853329719:ios:26b5f65d297b6e346f6ab2","web":"1:529853329719:web:44c04a1c5a5619086f6ab2","windows":"1:529853329719:web:7410e4332070a1bc6f6ab2"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "money-maker-2a99a",
+          "appId": "1:529853329719:android:0737273a66cb99516f6ab2",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "money-maker-2a99a",
+          "configurations": {
+            "android": "1:529853329719:android:0737273a66cb99516f6ab2",
+            "ios": "1:529853329719:ios:26b5f65d297b6e346f6ab2",
+            "macos": "1:529853329719:ios:26b5f65d297b6e346f6ab2",
+            "web": "1:529853329719:web:44c04a1c5a5619086f6ab2",
+            "windows": "1:529853329719:web:7410e4332070a1bc6f6ab2"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"%RESOURCE_DIR%\" run lint"
+      ]
+    }
+  ]
+}

@@ -31,7 +31,7 @@ class CustomTextField extends StatelessWidget {
       validator: validator,
       controller: textEditingController,
       style: const TextStyle(
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: FontWeight.normal,
         color: Colors.black87,
         // fontFamily: 'optica',

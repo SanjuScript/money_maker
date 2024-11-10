@@ -21,6 +21,10 @@ Future<void> main() async {
   Future<InitializationStatus> initGoogleMobileAds() {
     return MobileAds.instance.initialize();
   }
+  MobileAds.instance.updateRequestConfiguration(
+  RequestConfiguration(testDeviceIds: ["49B6711069FA474969F3BDCDD9B913A4"]),
+);
+
 
   await initGoogleMobileAds();
   runApp(MultiProvider(

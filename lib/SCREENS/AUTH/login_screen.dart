@@ -12,6 +12,7 @@ import 'package:money_maker/PROVIDERS/policy_status_pvovider.dart';
 import 'package:money_maker/SCREENS/home_screen.dart';
 import 'package:money_maker/THEMES/app_theme.dart';
 import 'package:money_maker/WIDGETS/BUTTONS/auth_button.dart';
+import 'package:money_maker/WIDGETS/DIALOGUES/DIALOGUE_UTILS/dialogue_utils.dart';
 import 'package:money_maker/WIDGETS/login_helpers.dart';
 import 'package:provider/provider.dart';
 
@@ -25,29 +26,22 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController referalCodeController = TextEditingController();
   FocusNode emailFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
+  FocusNode referalCodeFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
-  Future<bool?> getFieldData() async {
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      Fluttertoast.showToast(
-          msg: "Please fill  all required fields for signing in");
-      return false; // or return null;
-    } else {
-      return true;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
-
     final authProvider = Provider.of<LoginAuthProvider>(context);
+    final statusProvider = Provider.of<PolicyStatusProvider>(context);
     return Scaffold(
       // backgroundColor: Colors.yellow[500],
       body: Container(
         height: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Colors.blueAccent,
@@ -168,7 +162,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(
                           height: 15,
                         ),
-                        AuthenticationButton(onTap: () {}, text: "Login"),
+                        AuthenticationButton(
+                            onTap: () {
+                              if (emailController.text.isNotEmpty &&
+                                  passwordController.text.isNotEmpty) {
+                                Fluttertoast.showToast(
+                                    msg:
+                                        "The login option is currently unavailable. Please use Google Sign-In",
+                                    textColor: Colors.redAccent);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: "Please enter the details",
+                                    textColor: Colors.redAccent);
+                              }
+                            },
+                            text: "Login"),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -190,6 +198,38 @@ class _LoginScreenState extends State<LoginScreen> {
                               )),
                             ],
                           ),
+                        ),
+                        TextFieldContainer(
+                          widget: CustomTextField(
+                            textInputType: TextInputType.name,
+                            hintText: 'Referal code',
+                            prefixIcon: Icons.code_rounded,
+                            isObscure: false,
+                            showSuffix: false,
+                            textInputAction: TextInputAction.done,
+                            textEditingController: referalCodeController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              } else if (value.length < 6) {
+                                return 'Password must be greater than 6 characters';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(
+                              'Please ensure that you are entering the correct referral code.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                      color: Colors.indigo[700],
+                                      letterSpacing: 0,
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 12)),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -253,13 +293,46 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         InkWell(
                           onTap: () async {
-                            showGLoading();
-                            try {
-                              await authProvider.googleSignIn(context);
-                            } catch (e) {
-                              log(e.toString());
-                            } finally {
-                              Navigator.pop(context);
+                            if (statusProvider.accepted) {
+                              String referralCode =
+                                  referalCodeController.text.trim();
+
+                              if (referralCode.isEmpty) {
+                         
+                                DialogueUtils.showDialogue(
+                                    context, "referconfirm",
+                                    arguments: [
+                                      () async {
+                                        showGLoading();
+                                        try {
+                                          await authProvider.googleSignIn(
+                                              context,
+                                              referelCode: null);
+                                        } catch (e) {
+                                          log(e.toString());
+                                        } finally {
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                    ]);
+                              } else {
+                                // Proceed with referral code
+                                showGLoading();
+                                try {
+                                  await authProvider.googleSignIn(context,
+                                      referelCode: referralCode);
+                                } catch (e) {
+                                  log(e.toString());
+                                } finally {
+                                  Navigator.pop(context);
+                                }
+                              }
+                            } else {
+                              Fluttertoast.showToast(
+                                msg:
+                                    "Please accept our Privacy Policy to continue",
+                                textColor: Colors.redAccent,
+                              );
                             }
                           },
                           child: Container(
@@ -308,7 +381,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void showGLoading() {
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevent user from dismissing dialog
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return const AlertDialog(
           content: Column(
@@ -326,11 +399,11 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 Future<void> navigateTO(BuildContext context, bool status) {
-  if(status){
-   return Navigator.of(context)
-      .pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
-  }else{
-  return  Navigator.of(context)
-      .pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
+  if (status) {
+    return Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()));
+  } else {
+    return Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 }
